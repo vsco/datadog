@@ -33,6 +33,7 @@ For **configuration files**, put your API key and app key in a file like:
 
 The default location for this file is `~/.datadogrc`, but you may put it
 anywhere and tell the CLI about it via a flag: `-config=path/to/your/file`.
+It will expand only tildes at the beginning of paths as in the default.
 
 ## Usage
 
