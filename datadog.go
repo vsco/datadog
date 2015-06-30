@@ -63,6 +63,13 @@ func readDatadogKeys(configFilePath string, keysChan chan<- string) {
 		}
 	}
 
+	if keys.ApiKey == "" {
+		panic("Datadog API key missing.")
+	}
+	if keys.AppKey == "" {
+		panic("Datadog app key missing.")
+	}
+
 	keysChan <- keys.ApiKey
 	keysChan <- keys.AppKey
 }
