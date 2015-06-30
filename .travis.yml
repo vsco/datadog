@@ -1,0 +1,7 @@
+language: go
+branches:
+  only:
+  - master
+sudo: false
+notifications:
+  email: false
