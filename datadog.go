@@ -56,7 +56,11 @@ func readDatadogKeys(configFilePath string, keysChan chan<- string) {
 			panic(err)
 		}
 		defer f.Close()
-		json.NewDecoder(f).Decode(keys)
+
+		err = json.NewDecoder(f).Decode(keys)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	keysChan <- keys.ApiKey
