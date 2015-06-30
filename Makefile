@@ -26,6 +26,7 @@ vet:
 smoke-test: ./datadog
 	./datadog -dry-run gauge vsco.my_metric 100
 	./datadog -dry-run incr vsco.my_metric 100
+	./datadog -dry-run -tags="project:datadog,environment:prod" incr vsco.my_metric 100
 
 test: test-deps fmt vet smoke-test
 	go test -cover
