@@ -6,12 +6,15 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/user"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/zorkian/go-datadog-api"
 )
+
+var homeTildeShortcut = "~" + string(os.PathSeparator)
 
 type datadogKeys struct {
 	ApiKey string `json:"api_key"`
@@ -20,6 +23,18 @@ type datadogKeys struct {
 
 func init() {
 	log.SetOutput(os.Stderr)
+}
+
+func expandPath(path string) string {
+	if path[:2] == homeTildeShortcut {
+		currentUser, err := user.Current()
+		if err != nil {
+			panic(err)
+		}
+		return strings.Replace(path, homeTildeShortcut, currentUser.HomeDir+string(os.PathSeparator), 1)
+	} else {
+		return path
+	}
 }
 
 func readDatadogKeys(configFilePath string, keysChan chan<- string) {
@@ -36,7 +51,7 @@ func readDatadogKeys(configFilePath string, keysChan chan<- string) {
 	}
 
 	if keys.ApiKey == "" || keys.AppKey == "" {
-		f, err := os.Open(configFilePath)
+		f, err := os.Open(expandPath(configFilePath))
 		if err != nil {
 			panic(err)
 		}

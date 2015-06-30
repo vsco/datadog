@@ -20,6 +20,12 @@ func assertErrorMsg(t *testing.T, errMsg string) {
 	}
 }
 
+func TestExpandPath(t *testing.T) {
+	assert.Equal(t, "foo.txt", expandPath("foo.txt"))
+	assert.Equal(t, os.Getenv("HOME")+"/foo.txt", expandPath("~/foo.txt"))
+	assert.Equal(t, "foo/~/bar.txt", expandPath("foo/~/bar.txt"))
+}
+
 func TestReadDatadogKeysWithEnvVars(t *testing.T) {
 	apiKey, appKey := "myApiKey", "myAppKey"
 	os.Setenv("DATADOG_API_KEY", apiKey)
