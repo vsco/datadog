@@ -14,7 +14,10 @@ import (
 	"github.com/zorkian/go-datadog-api"
 )
 
-var homeTildeShortcut = "~" + string(os.PathSeparator)
+const (
+	homeTildeShortcut    = "~" + string(os.PathSeparator)
+	modeOnlyUserReadable = os.FileMode(0600)
+)
 
 type datadogKeys struct {
 	ApiKey string `json:"api_key"`
@@ -37,6 +40,23 @@ func expandPath(path string) string {
 	}
 }
 
+func ensureExclusivePermissions(f *os.File) {
+	if info, err := f.Stat(); info != nil {
+		if err != nil {
+			panic(err)
+		}
+
+		if info.Mode() != modeOnlyUserReadable {
+			panic(fmt.Errorf(
+				"UNSAFE PERMISSIONS: %s must have mode %v",
+				f.Name(),
+				modeOnlyUserReadable,
+			))
+		}
+
+	}
+}
+
 func readDatadogKeys(configFilePath string, keysChan chan<- string) {
 	defer func() {
 		if err := recover(); err != nil {
@@ -56,6 +76,8 @@ func readDatadogKeys(configFilePath string, keysChan chan<- string) {
 			panic(err)
 		}
 		defer f.Close()
+
+		ensureExclusivePermissions(f)
 
 		err = json.NewDecoder(f).Decode(keys)
 		if err != nil {
