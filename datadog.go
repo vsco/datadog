@@ -1,3 +1,39 @@
+// A CLI command for sending metrics (and soon events) to DatadogHQ.
+//
+// To install, just run:
+//      go get github.com/vsco/datadog
+//
+// and ensure that $GOPATH/bin is in your $PATH. Then, run "datadog".
+//
+// In order to authenticate with DatadogHQ, you will need to create a JSON
+// file with your api key and app key:
+//      {
+//          "api_key": "YOUR API KEY",
+//          "app_key": "YOUR APP KEY"
+//      }
+//
+// By default, datadog will look at ~/.datadogrc for this information but
+// accepts a -conf flag if this information is elsewhere:
+//      $ datadog -conf="/opt/mycompany/creds/datadogrc"
+//
+// The command line requires at least 3 arguments: metric type, metric
+// name, and at least one value:
+//      $ datadog increment mycompany.mymetric 101.2
+//
+// You may list any number of floating point values, which will each be
+// sumitted along with the time of execution as their time of reporting.
+//
+// Valid metric types are:
+//      - increment, incr, i, counter, c
+//      - gauge, g
+//
+// You can also add tags for your metric. Tagging by environment or DC?
+// No sweat:
+//      $ datadog incr mycompany.temp 98.6 -tags="dc:us-east-1,env:prod"
+//
+// Lastly, if you don't want to send any data, there is the -dry-run flag.
+//
+// For more information and default values, run datadog -h
 package main
 
 import (
